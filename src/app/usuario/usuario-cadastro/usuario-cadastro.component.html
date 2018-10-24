@@ -1,3 +1,20 @@
-<p>
-  usuario-cadastro works!
-</p>
+<div class="row">
+  <div class="col s12">
+    <div *ngIf="erro" class="card-panel red accent-1">
+      <strong>Ops!</strong> {{erro}}
+    </div>
+    <form #cadastro="ngForm" (submit)="cadastrar()">
+      <div class="input-field col s12">
+        <input type="text" id="username" name="username" class="autocomplete" [(ngModel)]="username" required
+          autocomplete="off">
+        <label for="autocomplete-input">Usuario</label>
+      </div>
+      <div class="input-field col s12">
+        <input type="password" id="senha" name="senha" class="autocomplete" [(ngModel)]="senha" required autocomplete="off">
+        <label for="autocomplete-input">Senha</label>
+      </div>
+      <button type="submit" class="light-blue lighten-2 btn" [disabled]="!cadastro.valid"><b>Cadastrar</b></button>
+    </form>
+
+  </div>
+</div>

@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UsuarioService } from '../usuario.service'
+
+import { Usuario } from '../usuario.model';
 
 @Component({
   selector: 'gam-usuario-login',
@@ -9,40 +11,36 @@ import { UsuarioService } from '../usuario.service'
 })
 export class UsuarioLoginComponent implements OnInit {
 
-  errors = false;
-  username: any;
-  senha: any;
+  usuarios: Usuario[]
+  username;
+  senha;
+  erro = null;
+  user = null;
 
-  @Input() familia;
-  @Output() respostaFamilia = new EventEmitter();
+  constructor(private userService: UsuarioService, private router: Router) {
 
-  constructor(
-    private conexao: UsuarioService,
-  ) { }
-
-
-  parametros = '';
+  }
 
   ngOnInit() {
+    this.user = this.userService.get();
   }
 
-  login() {
-    console.log('xD');
-    let formData = {
-      "username": this.username,
-      "password": this.senha
-    }
-    this.conexao.entrar(JSON.parse(JSON.stringify(formData))).subscribe(
-      (data: any) => {
-        localStorage.setItem('token', data.key);
-        console.log(data);
-        this.conexao.isUserLoggedIn.next(true);
-        this.errors = false;
-      },
-      (erros: any) => {
-        console.log(erros)
-        this.conexao.isUserLoggedIn.next(false);
-        this.errors = true
+  entrar() {
+    this.userService.login(this.username, this.senha)
+      .subscribe(usuarios => {
+        if (usuarios.length > 0) {
+          this.erro = null;
+          console.log(usuarios[0])
+          this.userService.set(usuarios[0]);
+          console.log(this.userService.get())
+          location.reload();
+
+          this.router.navigate(['dashboard']);
+        } else {
+          this.erro = 'Login ou senha incorretos';
+        }
       });
+
   }
+
 }

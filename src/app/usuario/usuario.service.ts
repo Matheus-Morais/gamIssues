@@ -1,61 +1,51 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { Injectable, EventEmitter, Output} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs'
 
-@Injectable({
-  providedIn: 'root'
-})
+import { Usuario } from './usuario.model'
+
+
+@Injectable() //Usado sempre para algo que recebe dados de outras coisas, por exemplo, de uma api
 export class UsuarioService {
 
-  private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  private API_URL = 'http://localhost:8000';
-  public isAutenticado = new EventEmitter<boolean>();
-  public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  API_URL = 'http://localhost:3000';
+  public user = null;
 
-  constructor(public http: HttpClient, private rotas: Router) {
+  constructor(private http: HttpClient) {
+  }
 
-    if (localStorage.getItem('token'))
-      this.isUserLoggedIn.next(true);
-    else
-      this.isUserLoggedIn.next(false);
+  login(username: string, senha: string): Observable<any[]>{
+    const qs = 'username=' + username + '&senha=' + senha;
+    return this.http.get<Usuario[]>(this.API_URL + '/usuarios?' + qs);
+  }
+
+  save(username: string, senha: string) {
+    const user = {'username': username, 'senha': senha};
+    return this.http.post(this.API_URL + '/usuarios', user);
+  }
+
+  set(user) {
+    let userL = 'Usuario Logado';
+    let myObj = {username: user.username, senha: user.senha};
+    localStorage.setItem(userL, JSON.stringify(myObj));
 
   }
 
-  public setToken(token: string): void {
-    this.headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token })
+  get() {
+    return this.user;
   }
 
-  public sair() {
-    localStorage.removeItem('token');
-    return true;
+  clear() {
+    let userL = 'Usuario Logado';
+    localStorage.removeItem(userL);
   }
 
-  public login(formulario: FormData) {
-    return new Promise((resolve, reject) => {
-      this.http.post(`${this.API_URL}/login/`, formulario)
-        .subscribe((resposta: any) => {
-          resolve(resposta.json())
-          this.isUserLoggedIn.next(true);
-        },
-          (error) => {
-            reject(error.json())
-            this.isUserLoggedIn.next(false);
-          }
-        )
-    });
+  logout() {
+    this.clear();
   }
 
-  public getUserInfo(): Observable<any> {
-    return this.http.get(`${this.API_URL}/jogador/`, {
-      headers: new HttpHeaders().set('Authorization', 'Token ' + localStorage.getItem('token'))
-    });
-  }
-
-  public entrar(formulario: JSON): |Observable<any> {
-    return this.http.post(`${this.API_URL}/login/`, formulario);
-
+  getUsuarios(): Observable<any[]> { //Sempre que retorna algo da api, retorna um Observable, por isso é necessario essa nomenclatura
+    return this.http.get<Usuario[]>(this.API_URL + '/usuarios')
   }
 
 }

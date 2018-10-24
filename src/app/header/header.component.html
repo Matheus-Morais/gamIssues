@@ -2,9 +2,13 @@
   <div class="nav-wrapper light-blue lighten-2">
     <div class="container">
       <a routerLink="/" class="brand-logo">Gamificação</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <ul id="nav-mobile" *ngIf="usuario" class="right hide-on-med-and-down">
         <li><a routerLink="dashboard">Dashboard</a></li>
-        <li><a href="#">Sair</a></li>
+        <li><a routerLink="" (click)="logout()">Sair</a></li>
+      </ul>
+
+      <ul id="nav-mobile" *ngIf="!usuario" class="right hide-on-med-and-down">
+        <li><a routerLink="login">Login</a></li>
       </ul>
     </div>
   </div>

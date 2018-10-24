@@ -13,6 +13,10 @@ import { UsuarioComponent } from './usuario/usuario.component';
 import { UsuarioLoginComponent } from './usuario/usuario-login/usuario-login.component';
 import { UsuarioCadastroComponent } from './usuario/usuario-cadastro/usuario-cadastro.component';
 
+import { UsuarioService } from './usuario/usuario.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http';
+
 const appRoutes: Routes = [
   {path: 'dashboard', component: BodyComponent},
   {path: 'login', component: UsuarioLoginComponent},
@@ -35,12 +39,17 @@ const appRoutes: Routes = [
   imports: [
     BrowserModule,
     FormsModule,
+    HttpClientModule,
+    HttpModule,
     RouterModule.forRoot(
       appRoutes,
       {enableTracing: true} // <-- debugging purposes only
     )
   ],
-  providers: [],
+  providers: [
+    UsuarioService,
+    HttpClient
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
