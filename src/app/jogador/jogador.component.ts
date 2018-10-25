@@ -7,9 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JogadorComponent implements OnInit {
 
+  usuario = null;
   constructor() { }
 
   ngOnInit() {
+    this.usuario = JSON.parse(localStorage.getItem('Usuario Logado'))
   }
 
 }

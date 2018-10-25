@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GitlabService } from '../gitlab.service';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'gam-missoes',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MissoesComponent implements OnInit {
 
-  constructor() { }
+  projetos: any = null;
+
+  constructor(private gitlabService: GitlabService) { }
 
   ngOnInit() {
+    this.projetos = this.getProjetos();
+  }
+
+  getProjetos(){
+    this.gitlabService.getGroupBystro().subscribe(groupBystro => this.projetos = groupBystro)
   }
 
 }

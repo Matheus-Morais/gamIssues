@@ -14,7 +14,9 @@ import { UsuarioLoginComponent } from './usuario/usuario-login/usuario-login.com
 import { UsuarioCadastroComponent } from './usuario/usuario-cadastro/usuario-cadastro.component';
 
 import { UsuarioService } from './usuario/usuario.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { GitlabService } from './gitlab.service';
+
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 
 const appRoutes: Routes = [
@@ -48,6 +50,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     UsuarioService,
+    GitlabService,
     HttpClient
   ],
   bootstrap: [AppComponent]
