@@ -26,7 +26,7 @@ export class UsuarioService {
 
   set(user) {
     let userL = 'Usuario Logado';
-    let myObj = {username: user.username, senha: user.senha, token: user.token};
+    let myObj = {username: user.username, senha: user.senha, gitlab_username: user.gitlab_username, token: user.token};
     localStorage.setItem(userL, JSON.stringify(myObj));
 
   }

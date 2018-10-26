@@ -18,11 +18,13 @@ import { GitlabService } from './gitlab.service';
 
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
+import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
 
 const appRoutes: Routes = [
   {path: 'dashboard', component: BodyComponent},
   {path: 'login', component: UsuarioLoginComponent},
   {path: 'cadastro', component: UsuarioCadastroComponent},
+  {path: 'missoes', component: MissoesComponent},
   {path: '', component: HomeComponent}
 ];
 
@@ -43,6 +45,7 @@ const appRoutes: Routes = [
     FormsModule,
     HttpClientModule,
     HttpModule,
+    LoadingBarHttpClientModule,
     RouterModule.forRoot(
       appRoutes,
       {enableTracing: true} // <-- debugging purposes only
