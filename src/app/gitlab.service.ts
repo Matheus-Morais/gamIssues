@@ -19,9 +19,9 @@ export class GitlabService {
     // this.setToken();
   }
 
-  // setToken(){
-  //   this.headers = new HttpHeaders({ 'Content-Type': 'application/json', 'PRIVATE-TOKEN': this.token_gitlab })
-  // }
+  getProjetos(): Observable<any[]>{
+    return this.http.get<any>(this.API_URL + 'groups/issues-gamificacao/projects?private_token='+ JSON.parse(localStorage.getItem('Usuario Logado')).token);
+  }
 
   public getGroupBystro(): Observable<any[]>{
     return this.http.get<any[]>(this.API_URL + 'groups/'+'NOME DO GRUPO'+'?private_token='+JSON.parse(localStorage.getItem('Usuario Logado')).token);
@@ -40,6 +40,12 @@ export class GitlabService {
     return this.http.get<any>(this.API_URL + 'users?username='+ JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_username, {
       headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
     });;
+  }
+
+  public getIssueState(state): Observable<any>{
+    return this.http.get(this.API_URL + 'groups/issues-gamificacao/issues?state='+ state, {
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
+    });
   }
 
   public getIssuesUser(id: string): Observable<any>{

@@ -19,12 +19,15 @@ import { GitlabService } from './gitlab.service';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
+import { ProjetosComponent } from './projetos/projetos.component';
+import { RankingComponent } from './ranking/ranking.component';
 
 const appRoutes: Routes = [
   {path: 'dashboard', component: BodyComponent},
   {path: 'login', component: UsuarioLoginComponent},
   {path: 'cadastro', component: UsuarioCadastroComponent},
-  {path: 'missoes', component: MissoesComponent},
+  {path: 'projetos', component: ProjetosComponent},
+  {path: 'missoes/:id', component: MissoesComponent},
   {path: '', component: HomeComponent}
 ];
 
@@ -38,7 +41,9 @@ const appRoutes: Routes = [
     HomeComponent,
     UsuarioComponent,
     UsuarioLoginComponent,
-    UsuarioCadastroComponent
+    UsuarioCadastroComponent,
+    ProjetosComponent,
+    RankingComponent
   ],
   imports: [
     BrowserModule,

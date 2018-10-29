@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs'
 
 import { Usuario } from './usuario.model'
+import { TouchSequence } from 'selenium-webdriver';
 
 
 @Injectable() //Usado sempre para algo que recebe dados de outras coisas, por exemplo, de uma api
@@ -24,9 +25,35 @@ export class UsuarioService {
     return this.http.post(this.API_URL + '/usuarios', user);
   }
 
+  addMissao(missao){
+    return this.http.post(this.API_URL + '/missoes', missao);
+  }
+
+  updateMissao(id){
+    const missao = {status: true};
+    return this.http.patch(this.API_URL + '/missoes/' + id, missao);
+  }
+
+  updateUsuario(xp){
+    const xpJ = {"xp": xp};
+    console.log(xpJ);
+    return this.http.patch(this.API_URL + '/usuarios/1', xpJ);
+  }
+
+  getUsuarios(): Observable<any[]>{
+    return this.http.get<any[]>(this.API_URL + '/usuarios');
+  }
+  getUser(): Observable<any>{
+    return this.http.get<any>(this.API_URL + '/usuarios/'+ JSON.parse(localStorage.getItem('Usuario Logado')).id);
+  }
+
+  getMissoes(): Observable<any[]>{
+    return this.http.get<any[]>(this.API_URL + '/missoes');
+  }
+
   set(user) {
     let userL = 'Usuario Logado';
-    let myObj = {username: user.username, senha: user.senha, gitlab_username: user.gitlab_username, token: user.token};
+    let myObj = {id: user.id, username: user.username, senha: user.senha, gitlab_username: user.gitlab_username, token: user.token, xp:user.xp};
     localStorage.setItem(userL, JSON.stringify(myObj));
 
   }
@@ -42,10 +69,6 @@ export class UsuarioService {
 
   logout() {
     this.clear();
-  }
-
-  getUsuarios(): Observable<any[]> { //Sempre que retorna algo da api, retorna um Observable, por isso é necessario essa nomenclatura
-    return this.http.get<Usuario[]>(this.API_URL + '/usuarios')
   }
 
 }

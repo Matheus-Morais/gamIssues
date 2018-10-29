@@ -1,0 +1,10 @@
+<div class="section">
+  <ul class="collection with-header">
+    <li class="collection-header">
+      <h4>Primeiro escolha um projeto!</h4>
+    </li>
+    <li class="collection-item" *ngFor="let p of projetos">
+      <div>{{p.name}}<a [routerLink]="['/missoes', p.id]" class="secondary-content"><i class="material-icons">Missões!</i></a></div>
+    </li>
+  </ul>
+</div>
