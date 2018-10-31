@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GitlabService } from '../gitlab.service';
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { UsuarioService } from "../usuario/usuario.service";
-import {UserGitLab} from '../usergitlab.model';
+
+import { UserGitLab } from '../usergitlab.model';
 import { ThrowStmt } from '@angular/compiler';
 import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
 //import * as $ from 'jquery';
@@ -21,93 +22,217 @@ export class MissoesComponent implements OnInit {
   missoes: any[] = null;
   nao_realizou_missao: boolean = false;
   xp_missao: any = 0;
-  
+  jogador_id: any = null;
+
   gitlab_username = null;
   constructor(
-    private gitlabService: GitlabService, 
-    private route: ActivatedRoute,
-    private usuarioService: UsuarioService
-    ) { }
+    private gitlabService: GitlabService,
+    private routeAc: ActivatedRoute,
+    private usuarioService: UsuarioService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
-    this.projeto_id = parseInt(this.route.snapshot.paramMap.get('id'));
+    this.projeto_id = parseInt(this.routeAc.snapshot.paramMap.get('id'));
     this.gitlabService.getIDforGitlabUser().subscribe(User => {
-      this.getIssues(User[0].id
-        )});
-    this.gitlab_username = JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_username;
+      this.getIssues(User[0].id)
+    }
+    );
+    this.gitlab_username = JSON.parse(localStorage.getItem('Usuario Logado')).username;
     this.usuarioService.getMissoes().subscribe(Missoes => {
-      this.missoes = Missoes
+      // console.log(Missoes)
+      this.missoes = Missoes;
+      //console.log(JSON.parse(localStorage.getItem('Usuario Logado')).id, JSON.parse(localStorage.getItem('Usuario Logado')).token);
+      this.usuarioService.getJogador(JSON.parse(localStorage.getItem('Usuario Logado')).id, JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(Jogador => {
+        this.jogador_id = Jogador.id;
+      });
+      //this.getJogadorID(JSON.parse(localStorage.getItem('Usuario Logado')).user.id, JSON.parse(localStorage.getItem('Usuario Logado')).token);
     });
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       $('.tabs').tabs();
       $('.modal').modal();
     });
 
   }
 
-  PegarMissao(issue){
-    const missao = {
-      nome: issue.title, 
-      xp: 30, 
-      status: false, 
-      id_issue: issue.id, 
-      id: issue.id
-    };
-    this.usuarioService.addMissao(missao).subscribe(Issues => {
-      console.log(Issues);
-    });
-    location.reload();
-  }
+  // getJogadorID(idUser, token) {
+  //   console.log('asdasda');
+  //   this.usuarioService.getJogador(idUser, token).subscribe(Jogador => {
+  //     console.log(Jogador.id);
 
-  FinalizarMissao(issue_id, id, xp){  
-    this.gitlabService.getIssueState('closed').subscribe(Issue =>{      
-      for (let issue of Issue){
-        if(issue.id == issue_id){
-          this.usuarioService.updateMissao(id).subscribe(Missao =>{ 
-            console.log(xp);
-            this.AtualizaXP(xp);   
-            this.nao_realizou_missao = false;
-            location.reload();        
-          });
-        }
+  //     this.jogador_id = Jogador.id;
+  //     //return this.jogador_id
+  //   });
+  //   //return this.usuarioService.getJogador(idUser, token);
+  // }
+
+  PegarMissao(issue) {
+    let idUser = JSON.parse(localStorage.getItem('Usuario Logado')).id;
+    let token = JSON.parse(localStorage.getItem('Usuario Logado')).token;
+
+    this.usuarioService.getJogador(idUser, token).subscribe(Jogador => {
+      let data_issue;
+      if (issue.due_date) {
+        data_issue = issue.due_date;
       }
-      this.nao_realizou_missao = true;
+      else {
+        data_issue = "";
+      }
+
+      const missao = {
+        "jogador": Jogador.id,
+        "nome_missao": issue.title,
+        "xp_missao": 80,
+        "nice_tempo": false,
+        "data": data_issue,
+        "status": false,
+        "id_issue": issue.id,
+        "id_projeto": issue.project_id
+      };
+      this.usuarioService.addMissao(missao).subscribe(Missao => {
+        // console.log(Jogador.id);
+        //this.AtualizaMA(Jogador.id, Jogador.m_adquiridas);
+        this.AtualizarValores(Jogador.id);
+        // location.reload();
+        this.router.navigate(['projetos']);
+      });
+    },
+      errors => {
+        console.log(errors);
       });
   }
 
-  AtualizaXP(xp){
-    this.usuarioService.getUser().subscribe(User =>{
-      console.log(JSON.parse(User.xp));
-      let newXP = User.xp + xp;
-      this.usuarioService.updateUsuario(newXP).subscribe();
-      this.atualizarUser(newXP);
+  FinalizarMissao(issue_id, id, idJogador, data_m) {
+    this.gitlabService.getIssueState('closed').subscribe(Issue => {
+      let cond = true;
+      for (let issue of Issue) {
+        if (issue.id == issue_id) {
+          cond = false;
+          console.log(data_m);
+          // const hoje: Date = new Date();
+          // let data: Date = new Date(data_m);
+          // let test = new Date(data_m).getDate/
+          let aux = true;
+          if (data_m != '') {
+            let hoje = new Date().toJSON().split('T')[0].split('-');
+            let data = new Date(data_m).toJSON().split('T')[0].split('-');
+            if (parseInt(data[1]) > parseInt(hoje[1])) {
+              aux = true
+            }
+            else if (parseInt(data[1]) == parseInt(hoje[1])) {
+              if (parseInt(data[2]) >= parseInt(hoje[2])) {
+                aux = true
+              }
+              else {
+                aux = false
+              }
+            }
+            else {
+              aux = false
+            }
+          }
+
+          this.usuarioService.updateMissao(id, aux).subscribe(Missao => {
+            this.AtualizarValores(idJogador);
+            this.nao_realizou_missao = false;
+            this.router.navigate(['projetos']);
+            // location.reload();
+          });
+        }
+      }
+      if (cond) {
+        this.nao_realizou_missao = true;
+      }
+      //location.reload();
     });
   }
 
-  atualizarUser(newXP){
+  AtualizaMA(jogador_id, m_adquiridas) {
+    //console.log(jogador_id);
+    let num = m_adquiridas + 1;
+    this.usuarioService.updateUsuario_MA(jogador_id, num).subscribe(P_Jogador => {
+      //console.log(P_Jogador);
+    });
+  }
+
+  AtualizarValores(idJogador) {
+    this.usuarioService.getMissoes().subscribe(Missoes => {
+      let ms_fechada = 0;
+      let ms_abertas = 0;
+      let ms_data = 0;
+      let xp_total = 0;
+      for (let missao of Missoes) {
+        if (missao.jogador == idJogador) {
+          if (missao.status == true) {
+            ms_fechada = ms_fechada + 1;
+            xp_total = xp_total + missao.xp_missao;
+          }
+          else {
+            ms_abertas = ms_abertas + 1;
+          }
+          if (missao.nice_tempo) {
+            ms_data = ms_data + 1;
+          }
+        }
+      }
+      let dados = {
+        "xp_total": xp_total,
+        "m_realizadas": ms_fechada,
+        "m_adquiridas": ms_abertas,
+        "mr_nadata": ms_data,
+      };
+      // console.log(dados);
+      this.usuarioService.atualizarJogador(idJogador, dados).subscribe(Jogador => {
+        // console.log('Jogador Atualizado');
+      },
+        errors => {
+          console.log(errors);
+        });
+    });
+  }
+
+  AtualizaXP_MF(xp) {
+    this.usuarioService.getUser(JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(User => {
+      //console.log(JSON.parse(User.xp));
+      this.usuarioService.getJogador(User.id, JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(Jogador => {
+        //console.log(Jogador);
+        let newXP = Jogador.xp_total + xp;
+        let newMF = Jogador.m_realizadas + 1;
+        //console.log(newXP);
+        this.usuarioService.updateUsuarioXP_MF(newXP, newMF, Jogador.id).subscribe(P_Jogador => {
+          //console.log(P_Jogador);
+        });
+      });
+
+      // this.usuarioService.updateUsuario(newXP).subscribe();
+      // this.atualizarUser(newXP);
+    });
+  }
+
+  atualizarUser(newXP) {
     let userL = 'Usuario Logado';
     let user = JSON.parse(localStorage.getItem('Usuario Logado'));
-    let myObj = {id: user.id, username: user.username, senha: user.senha, gitlab_username: user.gitlab_username, token: user.token, xp: newXP};
+    let myObj = { id: user.id, username: user.username, senha: user.senha, gitlab_username: user.gitlab_username, token: user.token, xp: newXP };
     localStorage.setItem(userL, JSON.stringify(myObj));
   }
 
-  jaTemMissao(id_iss){
-    for(let m of this.missoes){
-      if (m.id_issue == id_iss){
+  jaTemMissao(id_iss) {
+    for (let m of this.missoes) {
+      if (m.id_issue == id_iss) {
         return false
       }
     }
     return true
   }
 
-  getIssues(id){
+  getIssues(id) {
     this.gitlabService.getIssuesUser(id).subscribe(Issues => this.issues = Issues)
   }
 
-  ArrumarData(date){
+  ArrumarData(date) {
     var data = date.split('-', 3)
-    return data[2]+ '/'+ data[1]+ '/' + data[0];
+    return data[2] + '/' + data[1] + '/' + data[0];
   }
 
 }

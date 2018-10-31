@@ -19,12 +19,13 @@ export class GitlabService {
     // this.setToken();
   }
 
-  getProjetos(): Observable<any[]>{
-    return this.http.get<any>(this.API_URL + 'groups/issues-gamificacao/projects?private_token='+ JSON.parse(localStorage.getItem('Usuario Logado')).token);
+  getProjetos(token): Observable<any[]>{
+    console.log(JSON.parse(localStorage.getItem('Usuario Logado')));
+    return this.http.get<any>(this.API_URL + 'groups/issues-gamificacao/projects?private_token='+token);
   }
 
-  public getGroupBystro(): Observable<any[]>{
-    return this.http.get<any[]>(this.API_URL + 'groups/'+'NOME DO GRUPO'+'?private_token='+JSON.parse(localStorage.getItem('Usuario Logado')).token);
+  public getGroups(): Observable<any[]>{
+    return this.http.get<any[]>(this.API_URL + 'groups/'+'NOME DO GRUPO'+'?private_token='+JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token);
     // , {
     //   headers: new HttpHeaders().set('Authorization','PRIVATE-TOKEN'+ localStorage.getItem('token'))
     // private_token='+JSON.parse(localStorage.getItem('Usuario Logado')).token
@@ -33,30 +34,33 @@ export class GitlabService {
   }
 
   public getIDforGitlabUser(): Observable<any>{
-    // let user = this.http.get<UserGitLab>(this.API_URL + 'users?username='+ JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_username, {
-    //   headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
-    // });
-    // console.log(user.id);
-    return this.http.get<any>(this.API_URL + 'users?username='+ JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_username, {
-      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
+    return this.http.get<any>(this.API_URL + 'users?username='+ JSON.parse(localStorage.getItem('Usuario Logado')).username, {
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
     });;
+  }
+
+  public getGitlabUser(username, token): Observable<any>{
+    console.log(username, token);
+    return this.http.get<any>(this.API_URL + 'users?username='+ username, {
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', token)
+    });
   }
 
   public getIssueState(state): Observable<any>{
     return this.http.get(this.API_URL + 'groups/issues-gamificacao/issues?state='+ state, {
-      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
     });
   }
 
   public getIssuesUser(id: string): Observable<any>{
     return this.http.get(this.API_URL + 'groups/issues-gamificacao/issues?assignee_id='+ id, {
-      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
     });
   }
 
   public getProject(id): Observable<any[]>{
     return this.http.get<any[]>(this.API_URL + 'projects/'+id+'/', {
-      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).token)
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
     });
   }
 }

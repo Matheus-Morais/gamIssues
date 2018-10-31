@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GitlabService } from '../gitlab.service';
+import { UsuarioService } from '../usuario/usuario.service';
 
 @Component({
   selector: 'gam-projetos',
@@ -10,10 +11,11 @@ export class ProjetosComponent implements OnInit {
 
   projetos: any = null;
 
-  constructor(private gitlabService: GitlabService) { }
+  constructor(private gitlabService: GitlabService, private usuarioSerivce: UsuarioService) { }
 
   ngOnInit() {
-    this.gitlabService.getProjetos().subscribe(Projetos => this.projetos = Projetos);
+    this.gitlabService.getProjetos(JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token).subscribe(Projetos => this.projetos = Projetos);
+
   }
 
 }

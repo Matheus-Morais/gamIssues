@@ -27,18 +27,23 @@ export class UsuarioLoginComponent implements OnInit {
 
   entrar() {
     this.userService.login(this.username, this.senha)
-      .subscribe(usuarios => {
-        if (usuarios.length > 0) {
-          this.erro = null;
-          console.log(usuarios[0])
-          this.userService.set(usuarios[0]);
-          console.log(this.userService.get())
-          location.reload();
+      .subscribe(token => {
+        console.log(token);
 
-          this.router.navigate(['dashboard']);
-        } else {
-          this.erro = 'Login ou senha incorretos';
-        }
+        this.erro = null;
+        console.log(token.key)
+        this.userService.getUser(token.key).subscribe(Usuario => {
+          console.log(Usuario);
+          this.userService.getJogador(Usuario.id, token.key).subscribe(Jogador => {
+            this.userService.set(Usuario, token.key, Jogador.private_token);
+            this.router.navigate(['dashboard']);
+            location.reload();
+          });
+        });
+
+      },
+      erro =>{
+        this.erro = 'Login ou senha incorretos';
       });
 
   }
