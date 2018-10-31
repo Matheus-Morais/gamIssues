@@ -2,7 +2,7 @@
   <h5>Informações Jogador</h5>
   <div class="card">
     <div class="card-image waves-effect waves-block waves-light">
-      <img class="activator" style="width: 40%" src="{{usuario.url_imagem}}">
+      <img class="activator" style="width: 35%" src="{{usuario.url_imagem}}">
     </div>
     <div class="card-content">
       <span class="card-title activator grey-text text-darken-4">{{usuario.user.first_name}} {{usuario.user.last_name}}<i class="material-icons right">Clique para ver infomações!</i></span>
@@ -12,6 +12,7 @@
       <p>Missões realizadas: {{usuario.m_realizadas}} </p>
       <p>Missões em aberto: {{usuario.m_adquiridas}}</p>
       <p>Missões realizadas na data certa: {{usuario.mr_nadata}}</p>
+      <p>Nivel: {{getNivel(usuario.xp_total)}}</p>
       <p>XP Total: {{usuario.xp_total}} </p>
     </div>
   </div>

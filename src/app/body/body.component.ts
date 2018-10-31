@@ -16,7 +16,7 @@ export class BodyComponent implements OnInit {
 
   ngOnInit() {
     this.atualizar();
-    this.navegacao()
+    this.navegacao();
   }
   navegacao(){
     if (!this.usuario){

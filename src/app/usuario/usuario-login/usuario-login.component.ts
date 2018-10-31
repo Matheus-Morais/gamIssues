@@ -36,7 +36,7 @@ export class UsuarioLoginComponent implements OnInit {
           console.log(Usuario);
           this.userService.getJogador(Usuario.id, token.key).subscribe(Jogador => {
             this.userService.set(Usuario, token.key, Jogador.private_token);
-            this.router.navigate(['dashboard']);
+            this.router.navigate(['']);
             location.reload();
           });
         });

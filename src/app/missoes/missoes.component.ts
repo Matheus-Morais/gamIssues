@@ -3,10 +3,6 @@ import { GitlabService } from '../gitlab.service';
 import { ActivatedRoute, Router } from "@angular/router";
 import { UsuarioService } from "../usuario/usuario.service";
 
-import { UserGitLab } from '../usergitlab.model';
-import { ThrowStmt } from '@angular/compiler';
-import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
-//import * as $ from 'jquery';
 declare var $: any;
 
 @Component({
@@ -40,13 +36,10 @@ export class MissoesComponent implements OnInit {
     );
     this.gitlab_username = JSON.parse(localStorage.getItem('Usuario Logado')).username;
     this.usuarioService.getMissoes().subscribe(Missoes => {
-      // console.log(Missoes)
       this.missoes = Missoes;
-      //console.log(JSON.parse(localStorage.getItem('Usuario Logado')).id, JSON.parse(localStorage.getItem('Usuario Logado')).token);
       this.usuarioService.getJogador(JSON.parse(localStorage.getItem('Usuario Logado')).id, JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(Jogador => {
         this.jogador_id = Jogador.id;
       });
-      //this.getJogadorID(JSON.parse(localStorage.getItem('Usuario Logado')).user.id, JSON.parse(localStorage.getItem('Usuario Logado')).token);
     });
 
     $(document).ready(function () {
@@ -55,17 +48,6 @@ export class MissoesComponent implements OnInit {
     });
 
   }
-
-  // getJogadorID(idUser, token) {
-  //   console.log('asdasda');
-  //   this.usuarioService.getJogador(idUser, token).subscribe(Jogador => {
-  //     console.log(Jogador.id);
-
-  //     this.jogador_id = Jogador.id;
-  //     //return this.jogador_id
-  //   });
-  //   //return this.usuarioService.getJogador(idUser, token);
-  // }
 
   PegarMissao(issue) {
     let idUser = JSON.parse(localStorage.getItem('Usuario Logado')).id;
@@ -91,10 +73,8 @@ export class MissoesComponent implements OnInit {
         "id_projeto": issue.project_id
       };
       this.usuarioService.addMissao(missao).subscribe(Missao => {
-        // console.log(Jogador.id);
-        //this.AtualizaMA(Jogador.id, Jogador.m_adquiridas);
         this.AtualizarValores(Jogador.id);
-        // location.reload();
+        
         this.router.navigate(['projetos']);
       });
     },
@@ -109,10 +89,6 @@ export class MissoesComponent implements OnInit {
       for (let issue of Issue) {
         if (issue.id == issue_id) {
           cond = false;
-          console.log(data_m);
-          // const hoje: Date = new Date();
-          // let data: Date = new Date(data_m);
-          // let test = new Date(data_m).getDate/
           let aux = true;
           if (data_m != '') {
             let hoje = new Date().toJSON().split('T')[0].split('-');
@@ -137,22 +113,22 @@ export class MissoesComponent implements OnInit {
             this.AtualizarValores(idJogador);
             this.nao_realizou_missao = false;
             this.router.navigate(['projetos']);
-            // location.reload();
+            
           });
         }
       }
       if (cond) {
         this.nao_realizou_missao = true;
       }
-      //location.reload();
+      
     });
   }
 
   AtualizaMA(jogador_id, m_adquiridas) {
-    //console.log(jogador_id);
+    
     let num = m_adquiridas + 1;
     this.usuarioService.updateUsuario_MA(jogador_id, num).subscribe(P_Jogador => {
-      //console.log(P_Jogador);
+     
     });
   }
 
@@ -182,9 +158,9 @@ export class MissoesComponent implements OnInit {
         "m_adquiridas": ms_abertas,
         "mr_nadata": ms_data,
       };
-      // console.log(dados);
+      
       this.usuarioService.atualizarJogador(idJogador, dados).subscribe(Jogador => {
-        // console.log('Jogador Atualizado');
+       
       },
         errors => {
           console.log(errors);
@@ -194,19 +170,17 @@ export class MissoesComponent implements OnInit {
 
   AtualizaXP_MF(xp) {
     this.usuarioService.getUser(JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(User => {
-      //console.log(JSON.parse(User.xp));
+      
       this.usuarioService.getJogador(User.id, JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(Jogador => {
-        //console.log(Jogador);
+        
         let newXP = Jogador.xp_total + xp;
         let newMF = Jogador.m_realizadas + 1;
-        //console.log(newXP);
+        
         this.usuarioService.updateUsuarioXP_MF(newXP, newMF, Jogador.id).subscribe(P_Jogador => {
-          //console.log(P_Jogador);
+          
         });
       });
 
-      // this.usuarioService.updateUsuario(newXP).subscribe();
-      // this.atualizarUser(newXP);
     });
   }
 
@@ -235,4 +209,7 @@ export class MissoesComponent implements OnInit {
     return data[2] + '/' + data[1] + '/' + data[0];
   }
 
+  noError(){
+    this.nao_realizou_missao = false;
+  }
 }
