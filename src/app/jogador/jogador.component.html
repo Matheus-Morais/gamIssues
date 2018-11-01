@@ -5,15 +5,20 @@
       <img class="activator" style="width: 35%" src="{{usuario.url_imagem}}">
     </div>
     <div class="card-content">
-      <span class="card-title activator grey-text text-darken-4">{{usuario.user.first_name}} {{usuario.user.last_name}}<i class="material-icons right">Clique para ver infomações!</i></span>
+      <span class="card-title activator grey-text text-darken-4"><strong>{{usuario.user.first_name}} {{usuario.user.last_name}}<i class="material-icons right">Clique!</i></strong></span>
     </div>
     <div class="card-reveal">
-      <span class="card-title grey-text text-darken-4">Informações<i class="material-icons right">close</i></span>
+      <span class="card-title grey-text text-darken-4"><strong>Informações<i class="material-icons right">Fechar</i></strong></span>
       <p>Missões realizadas: {{usuario.m_realizadas}} </p>
       <p>Missões em aberto: {{usuario.m_adquiridas}}</p>
       <p>Missões realizadas na data certa: {{usuario.mr_nadata}}</p>
       <p>Nivel: {{getNivel(usuario.xp_total)}}</p>
-      <p>XP Total: {{usuario.xp_total}} </p>
+      <p>Barra de progresso para Upar para o nivel {{getNivel(usuario.xp_total)+1}}!</p>
+      <div class="progress">
+        
+        <div class="determinate" [ngStyle]="progress"></div>
+    </div>
+      <p>Experience Points (XP): {{usuario.xp_total}} </p>
     </div>
   </div>
 </div>

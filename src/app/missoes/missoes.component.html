@@ -28,7 +28,8 @@
                 <p *ngIf="m.data">
                   Você tem até {{ArrumarData(m.data)}} para finalizar missão!
                 </p>
-                <a (click)="FinalizarMissao(m.id_issue, m.id, m.jogador, m.data)" class="waves-effect waves-light btn secondary-content">Finalizar Missão!</a>
+                <a (click)="FinalizarMissao(m.id_issue, m.id, m.jogador, m.data)" class="waves-effect waves-light btn secondary-content">Finalizar
+                  Missão!</a>
               </div>
             </li>
           </div>
@@ -70,6 +71,9 @@
                 </p>
                 <p *ngIf="m.xp_missao == 40">
                   Missão terminada depois do tempo previsto!
+                </p>
+                <p *ngIf="m.xp_missao == 80">
+                  Missão terminada no tempo previsto!
                 </p>
               </div>
             </li>

@@ -12,6 +12,7 @@ export class RankingComponent implements OnInit {
   users_ma: any = null;
   users_mf: any = null;
   users_temp: any = null;
+  niveis = [30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360];
 
   constructor(private usuarioService: UsuarioService) { }
 
@@ -82,5 +83,15 @@ export class RankingComponent implements OnInit {
         }
     }
     return usuarios;
+  }
+
+  getNivel(xp_total){
+    let nivel = 0;
+    for(let xp of this.niveis){
+      if(xp_total >= xp){
+        nivel = nivel + 1;
+      }
+    }
+    return nivel;
   }
 }

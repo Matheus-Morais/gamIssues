@@ -26,6 +26,8 @@ export class JogadorComponent implements OnInit {
         this.usuarioService.getJogador(User.id, JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(
           Jogador => {
             this.usuario = Jogador;
+            this.progress = this.getProgress(Jogador.xp_total);
+
             
           },
           erro =>{
@@ -61,8 +63,15 @@ export class JogadorComponent implements OnInit {
     return nivel;
   }
   getProgress(xp_total){
-    let style
-    return 'style="width: "+20+" %"';
+    let nivel = 0;
+    for(let xp of this.niveis){
+      if(xp_total >= xp){
+        nivel = nivel + 1;
+      }
+    }
+    
+    let x = (100*xp_total)/this.niveis[nivel];
+    return {'width': x+'%'};
   }
 
 }
