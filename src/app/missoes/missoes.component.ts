@@ -49,6 +49,80 @@ export class MissoesComponent implements OnInit {
 
   }
 
+  PegarTodasMissoes(issues, projeto_id) {
+    let idUser = JSON.parse(localStorage.getItem('Usuario Logado')).id;
+    let token = JSON.parse(localStorage.getItem('Usuario Logado')).token;
+    this.usuarioService.getJogador(idUser, token).subscribe(Jogador => {
+      for (let issue of issues) {
+        if (projeto_id == issue.project_id && this.jaTemMissao(issue.id) && issue.state == 'opened') {
+
+          let data_issue;
+          if (issue.due_date) {
+            data_issue = issue.due_date;
+          }
+          else {
+            data_issue = "";
+          }
+
+          const missao = {
+            "jogador": Jogador.id,
+            "nome_missao": issue.title,
+            "xp_missao": 80,
+            "nice_tempo": false,
+            "data": data_issue,
+            "status": false,
+            "id_issue": issue.id,
+            "id_projeto": issue.project_id
+          };
+          this.usuarioService.addMissao(missao).subscribe(Missao => {
+            this.AtualizarValores(Jogador.id);
+          });
+        }
+      }
+      this.router.navigate(['projetos']);
+    },
+      errors => {
+        console.log(errors);
+      });
+  }
+
+  FinalizarTodasMissoes(issues, missoes){
+    for(let issue of issues){
+      for(let missao of missoes){
+        let cond = true;
+        if (issue.id == missao.id_issue) {
+          cond = false;
+          let aux = true;
+          if (missao.data != '') {
+            let hoje = new Date().toJSON().split('T')[0].split('-');
+            let data = new Date(missao.data).toJSON().split('T')[0].split('-');
+            if (parseInt(data[1]) > parseInt(hoje[1])) {
+              aux = true
+            }
+            else if (parseInt(data[1]) == parseInt(hoje[1])) {
+              if (parseInt(data[2]) >= parseInt(hoje[2])) {
+                aux = true
+              }
+              else {
+                aux = false
+              }
+            }
+            else {
+              aux = false
+            }
+          }
+
+          this.usuarioService.updateMissao(missao.id, aux).subscribe(Missao => {
+            this.AtualizarValores(missao.jogador);
+            this.nao_realizou_missao = false;
+          
+          });
+        }
+      }
+    }
+    this.router.navigate(['projetos']);
+  }
+
   PegarMissao(issue) {
     let idUser = JSON.parse(localStorage.getItem('Usuario Logado')).id;
     let token = JSON.parse(localStorage.getItem('Usuario Logado')).token;
@@ -74,7 +148,7 @@ export class MissoesComponent implements OnInit {
       };
       this.usuarioService.addMissao(missao).subscribe(Missao => {
         this.AtualizarValores(Jogador.id);
-        
+
         this.router.navigate(['projetos']);
       });
     },
@@ -113,22 +187,22 @@ export class MissoesComponent implements OnInit {
             this.AtualizarValores(idJogador);
             this.nao_realizou_missao = false;
             this.router.navigate(['projetos']);
-            
+
           });
         }
       }
       if (cond) {
         this.nao_realizou_missao = true;
       }
-      
+
     });
   }
 
   AtualizaMA(jogador_id, m_adquiridas) {
-    
+
     let num = m_adquiridas + 1;
     this.usuarioService.updateUsuario_MA(jogador_id, num).subscribe(P_Jogador => {
-     
+
     });
   }
 
@@ -158,9 +232,9 @@ export class MissoesComponent implements OnInit {
         "m_adquiridas": ms_abertas,
         "mr_nadata": ms_data,
       };
-      
+
       this.usuarioService.atualizarJogador(idJogador, dados).subscribe(Jogador => {
-       
+
       },
         errors => {
           console.log(errors);
@@ -170,14 +244,14 @@ export class MissoesComponent implements OnInit {
 
   AtualizaXP_MF(xp) {
     this.usuarioService.getUser(JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(User => {
-      
+
       this.usuarioService.getJogador(User.id, JSON.parse(localStorage.getItem('Usuario Logado')).token).subscribe(Jogador => {
-        
+
         let newXP = Jogador.xp_total + xp;
         let newMF = Jogador.m_realizadas + 1;
-        
+
         this.usuarioService.updateUsuarioXP_MF(newXP, newMF, Jogador.id).subscribe(P_Jogador => {
-          
+
         });
       });
 
@@ -209,7 +283,7 @@ export class MissoesComponent implements OnInit {
     return data[2] + '/' + data[1] + '/' + data[0];
   }
 
-  noError(){
+  noError() {
     this.nao_realizou_missao = false;
   }
 }

@@ -1,16 +1,18 @@
-<nav>
-  <div class="nav-wrapper light-blue lighten-2">
-    <div class="container">
-      <a routerLink="/" class="brand-logo">GamIssue</a>
-      <ul id="nav-mobile" *ngIf="usuario" class="right hide-on-med-and-down">
-        <li><a routerLink="dashboard">Dashboard</a></li>
-        <li><a routerLink="projetos">Missões</a></li>
-        <li><a routerLink="" (click)="logout()">Sair</a></li>
-      </ul>
+<div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper light-blue lighten-2">
+      <div class="container">
+        <a routerLink="/" class="brand-logo">GamIssue</a>
+        <ul id="nav-mobile" *ngIf="usuario" class="right hide-on-med-and-down">
+          <li><a routerLink="dashboard">Dashboard</a></li>
+          <li><a routerLink="projetos">Missões</a></li>
+          <li><a routerLink="" (click)="logout()">Sair</a></li>
+        </ul>
 
-      <ul id="nav-mobile" *ngIf="!usuario" class="right hide-on-med-and-down">
-        <li><a routerLink="login">Login</a></li>
-      </ul>
+        <ul id="nav-mobile" *ngIf="!usuario" class="right hide-on-med-and-down">
+          <li><a routerLink="login">Login</a></li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</div>
