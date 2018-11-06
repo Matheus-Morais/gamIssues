@@ -5,7 +5,12 @@
         <h4>Primeiro escolha um projeto!</h4>
       </li>
       <li class="collection-item" *ngFor="let p of projetos">
-        <div>{{p.name}}<a [routerLink]="['/missoes', p.id]" class="secondary-content">Missões!</a></div>
+        <div>
+          <h5><strong>{{p.name}} - {{p.id}}</strong></h5>
+          <p>{{p.description}}</p>
+          <p><a [routerLink]="['/missoes', p.id]" class="right">Missões!</a></p><br />
+
+        </div>
       </li>
     </ul>
   </div>

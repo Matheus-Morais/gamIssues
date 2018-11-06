@@ -8,7 +8,8 @@ import {UserGitLab} from './usergitlab.model';
 })
 export class GitlabService {
 
-  API_URL = 'https://gitlab.com/api/v4/';
+  // API_URL = 'https://gitlab.com/api/v4/';
+  API_URL = 'http://gitlab.bitstudio.io/api/v4/';
   headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   
 
@@ -16,7 +17,7 @@ export class GitlabService {
   }
 
   getProjetos(token): Observable<any[]>{
-    return this.http.get<any>(this.API_URL + 'groups/issues-gamificacao/projects?private_token='+token);
+    return this.http.get<any>(this.API_URL + 'groups/fsw/projects?per_page=100&private_token='+token);
   }
 
   public getGroups(): Observable<any[]>{
@@ -36,14 +37,20 @@ export class GitlabService {
     });
   }
 
-  public getIssueState(state): Observable<any>{
-    return this.http.get(this.API_URL + 'groups/issues-gamificacao/issues?state='+ state, {
+  public getIssueState(state, page: string): Observable<any>{
+    return this.http.get(this.API_URL + 'groups/fsw/issues?state='+ state + '&page=' + page + '&per_page=100', {
       headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
     });
   }
 
-  public getIssuesUser(id: string): Observable<any>{
-    return this.http.get(this.API_URL + 'groups/issues-gamificacao/issues?assignee_id='+ id, {
+  public getIssuesUser(id: string, page: string): Observable<any>{
+    return this.http.get(this.API_URL + 'groups/fsw/issues?assignee_id='+ 4 + '&page=' + page + '&per_page=100', {
+      headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
+    });
+  }
+
+  public getIssuesProject(id: string): Observable<any>{
+    return this.http.get(this.API_URL + 'projects/'+id+'/issues', {
       headers: new HttpHeaders().set('PRIVATE-TOKEN', JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token)
     });
   }

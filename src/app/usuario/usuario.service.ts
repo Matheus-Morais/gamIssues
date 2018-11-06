@@ -35,8 +35,6 @@ export class UsuarioService {
       "private_token": privatetoken,
       "url_imagem": image
     }; 
-    // Precisa criar um model para user e para Jogador, e passar esse model
-    console.log(JSON.parse(JSON.stringify(jogador)));
     return this.http.post(this.API_URL + '/criarjogador/', JSON.parse(JSON.stringify(jogador)));
   }
 
@@ -62,7 +60,6 @@ export class UsuarioService {
 
   updateUsuarioXP_MF(xp, mf, id){
     const xpJ = {"xp_total": xp, "m_realizadas": mf};
-    //console.log(JSON.parse(localStorage.getItem('Usuario Logado')).token);
     return this.http.patch(this.API_URL + '/jogador/' +id+ '/', xpJ, {
       headers: new HttpHeaders().set('authorization', 'Token ' + JSON.parse(localStorage.getItem('Usuario Logado')).token)
     });
@@ -74,7 +71,6 @@ export class UsuarioService {
   }
   updateUsuario_MA(id, ma){
     const xpJ = {"m_adquiridas": ma};
-    //console.log(id);
     return this.http.patch(this.API_URL + '/jogador/' +id+ '/', xpJ, {
       headers: new HttpHeaders().set('authorization', 'Token ' + JSON.parse(localStorage.getItem('Usuario Logado')).token)
     });
@@ -87,14 +83,12 @@ export class UsuarioService {
   }
 
   getUser(token): Observable<any>{
-    //console.log(token, 'getuser')
     return this.http.get<any>(this.API_URL + '/user/', {
       headers: new HttpHeaders().set('authorization', 'Token ' + token)
     });
   }
 
   getJogador(id, token): Observable<any>{
-    //console.log(id, token);
     return this.http.get<any>(this.API_URL + '/jogador/' + id + '/', {
       headers: new HttpHeaders().set('authorization', 'Token ' + token)
     });
@@ -108,7 +102,6 @@ export class UsuarioService {
 
   set(user, tokenn, tokengitlab) {
     let userL = 'Usuario Logado';
-    console.log(user);
     let myObj = {id: user.id, username: user.username, token: tokenn, gitlab_token: tokengitlab};
     localStorage.setItem(userL, JSON.stringify(myObj));
 

@@ -14,7 +14,9 @@ export class ProjetosComponent implements OnInit {
   constructor(private gitlabService: GitlabService, private usuarioSerivce: UsuarioService) { }
 
   ngOnInit() {
-    this.gitlabService.getProjetos(JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token).subscribe(Projetos => this.projetos = Projetos);
+    this.gitlabService.getProjetos(JSON.parse(localStorage.getItem('Usuario Logado')).gitlab_token).subscribe(Projetos => {
+      this.projetos = Projetos;
+    });
 
   }
 

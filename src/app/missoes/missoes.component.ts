@@ -14,7 +14,7 @@ export class MissoesComponent implements OnInit {
 
   user: any = null;
   projeto_id: any = null;
-  issues: any = null;
+  issues: any = [];
   missoes: any[] = null;
   nao_realizou_missao: boolean = false;
   xp_missao: any = 0;
@@ -32,6 +32,7 @@ export class MissoesComponent implements OnInit {
     this.projeto_id = parseInt(this.routeAc.snapshot.paramMap.get('id'));
     this.gitlabService.getIDforGitlabUser().subscribe(User => {
       this.getIssues(User[0].id)
+      //this.getIssues(this.projeto_id)
     }
     );
     this.gitlab_username = JSON.parse(localStorage.getItem('Usuario Logado')).username;
@@ -86,11 +87,11 @@ export class MissoesComponent implements OnInit {
       });
   }
 
-  FinalizarTodasMissoes(issues, missoes){
-    for(let issue of issues){
-      for(let missao of missoes){
+  FinalizarTodasMissoes(issues, missoes) {
+    for (let issue of issues) {
+      for (let missao of missoes) {
         let cond = true;
-        if (issue.id == missao.id_issue) {
+        if (issue.id == missao.id_issue && issue.state == 'closed') {
           cond = false;
           let aux = true;
           if (missao.data != '') {
@@ -115,7 +116,7 @@ export class MissoesComponent implements OnInit {
           this.usuarioService.updateMissao(missao.id, aux).subscribe(Missao => {
             this.AtualizarValores(missao.jogador);
             this.nao_realizou_missao = false;
-          
+
           });
         }
       }
@@ -158,44 +159,42 @@ export class MissoesComponent implements OnInit {
   }
 
   FinalizarMissao(issue_id, id, idJogador, data_m) {
-    this.gitlabService.getIssueState('closed').subscribe(Issue => {
-      let cond = true;
-      for (let issue of Issue) {
-        if (issue.id == issue_id) {
-          cond = false;
-          let aux = true;
-          if (data_m != '') {
-            let hoje = new Date().toJSON().split('T')[0].split('-');
-            let data = new Date(data_m).toJSON().split('T')[0].split('-');
-            if (parseInt(data[1]) > parseInt(hoje[1])) {
+
+    let cond = true;
+    for (let issue of this.issues) {
+      if (issue.id == issue_id && issue.state == 'closed') {
+        cond = false;
+        let aux = true;
+        if (data_m != '') {
+          let hoje = new Date().toJSON().split('T')[0].split('-');
+          let data = new Date(data_m).toJSON().split('T')[0].split('-');
+          if (parseInt(data[1]) > parseInt(hoje[1])) {
+            aux = true
+          }
+          else if (parseInt(data[1]) == parseInt(hoje[1])) {
+            if (parseInt(data[2]) >= parseInt(hoje[2])) {
               aux = true
-            }
-            else if (parseInt(data[1]) == parseInt(hoje[1])) {
-              if (parseInt(data[2]) >= parseInt(hoje[2])) {
-                aux = true
-              }
-              else {
-                aux = false
-              }
             }
             else {
               aux = false
             }
           }
-
-          this.usuarioService.updateMissao(id, aux).subscribe(Missao => {
-            this.AtualizarValores(idJogador);
-            this.nao_realizou_missao = false;
-            this.router.navigate(['projetos']);
-
-          });
+          else {
+            aux = false
+          }
         }
-      }
-      if (cond) {
-        this.nao_realizou_missao = true;
-      }
 
-    });
+        this.usuarioService.updateMissao(id, aux).subscribe(Missao => {
+          this.AtualizarValores(idJogador);
+          this.nao_realizou_missao = false;
+          this.router.navigate(['projetos']);
+
+        });
+      }
+    }
+    if (cond) {
+      this.nao_realizou_missao = true;
+    }
   }
 
   AtualizaMA(jogador_id, m_adquiridas) {
@@ -275,7 +274,15 @@ export class MissoesComponent implements OnInit {
   }
 
   getIssues(id) {
-    this.gitlabService.getIssuesUser(id).subscribe(Issues => this.issues = Issues)
+    for (let i = 1; i < 11; i++) {
+
+      this.gitlabService.getIssuesUser(id, i + '').subscribe(Issues => {
+        for (let i of Issues) {
+          this.issues.push(i);
+        }
+
+      });
+    }
   }
 
   ArrumarData(date) {

@@ -28,12 +28,9 @@ export class UsuarioLoginComponent implements OnInit {
   entrar() {
     this.userService.login(this.username, this.senha)
       .subscribe(token => {
-        console.log(token);
 
         this.erro = null;
-        console.log(token.key)
         this.userService.getUser(token.key).subscribe(Usuario => {
-          console.log(Usuario);
           this.userService.getJogador(Usuario.id, token.key).subscribe(Jogador => {
             this.userService.set(Usuario, token.key, Jogador.private_token);
             this.router.navigate(['']);

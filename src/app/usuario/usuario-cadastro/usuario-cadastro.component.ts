@@ -31,7 +31,6 @@ export class UsuarioCadastroComponent implements OnInit {
   }
   cadastrar() {
     this.gitlabService.getGitlabUser(this.username, this.privatetoken).subscribe(GitLabUser => {
-      console.log(GitLabUser[0].avatar_url);
       this.usuarioService.save(this.username, this.senha, this.privatetoken, this.nome, this.sobrenome, this.email, GitLabUser[0].avatar_url)
       .subscribe(
         usuario => {  
