@@ -2,8 +2,8 @@
 <div class="row">
   <div class="cadastroForm">
     <div class="col s12">
-      <div *ngIf="erro" class="card-panel red accent-1">
-        <strong>Ops!</strong> {{erro}}
+      <div *ngIf="cadastro_erro" class="card-panel red accent-1">
+        <strong>Ops!</strong> Problema na criação do usuario
       </div>
       <form #cadastro="ngForm" (submit)="cadastrar()">
         <div class="input-field col s12">

@@ -19,7 +19,7 @@ export class MissoesComponent implements OnInit {
   nao_realizou_missao: boolean = false;
   xp_missao: any = 0;
   jogador_id: any = null;
-
+  usuario = null;
   gitlab_username = null;
   constructor(
     private gitlabService: GitlabService,
@@ -29,6 +29,9 @@ export class MissoesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.atualizar();
+    this.navegacao();
+  
     this.projeto_id = parseInt(this.routeAc.snapshot.paramMap.get('id'));
     this.gitlabService.getIDforGitlabUser().subscribe(User => {
       this.getIssues(User[0].id)
@@ -48,6 +51,20 @@ export class MissoesComponent implements OnInit {
       $('.modal').modal();
     });
 
+  }
+
+  navegacao(){
+    if (!this.usuario){
+      this.router.navigate(['']);
+    }
+    else{
+      this.router.navigate(['dashboard']);
+    }
+  }
+
+  atualizar(){
+    let userL = 'Usuario Logado';
+    this.usuario = JSON.parse(localStorage.getItem(userL));
   }
 
   PegarTodasMissoes(issues, projeto_id) {

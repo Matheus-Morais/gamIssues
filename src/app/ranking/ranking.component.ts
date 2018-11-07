@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../usuario/usuario.service';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'gam-ranking',
@@ -14,15 +15,34 @@ export class RankingComponent implements OnInit {
   users_temp: any = null;
   niveis = [30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360];
 
-  constructor(private usuarioService: UsuarioService) { }
+  usuario = null;
+
+  constructor(private usuarioService: UsuarioService, private router: Router) { }
 
   ngOnInit() {
+    this.atualizar();
+    this.navegacao();
+    
     this.usuarioService.getUsuarios().subscribe(Usuarios => {
       this.users_xp = this.getUsersPorXP(Usuarios);
       this.users_ma = this.getUsersPorMA(Usuarios);
       this.users_mf = this.getUsersPorMF(Usuarios);
       this.users_temp = this.getUsersPorTEMP(Usuarios);
     });
+  }
+
+  navegacao(){
+    if (!this.usuario){
+      this.router.navigate(['']);
+    }
+    else{
+      this.router.navigate(['dashboard']);
+    }
+  }
+
+  atualizar(){
+    let userL = 'Usuario Logado';
+    this.usuario = JSON.parse(localStorage.getItem(userL));
   }
 
   getUsersPorXP(users){
